@@ -1,7 +1,7 @@
 package com.aneesh.postservice.kafka;
 
+import com.aneesh.basedomains.entities.PostEvent;
 import com.aneesh.postservice.configs.KafkaConfig;
-import com.aneesh.postservice.entities.Post;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -26,43 +26,43 @@ public class KafkaProducer {
     @Autowired
     private KafkaConfig kafkaConfig;
 
-    private KafkaTemplate<String, Post> kafkaTemplate;
+    private KafkaTemplate<String, PostEvent> kafkaTemplate;
 
     private static final Logger log = LoggerFactory.getLogger(KafkaProducer.class);
 
-    public void sendPostCreatedMessage(Post post) throws JsonProcessingException {
+    public void sendPostCreatedMessage(PostEvent postEvent) throws JsonProcessingException {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(post);
+        String json = ow.writeValueAsString(postEvent);
 
         log.info(String.format("POST CREATED MESSAGE => %s", json));
 
-        Message<Post> message = MessageBuilder
-                .withPayload(post)
+        Message<PostEvent> message = MessageBuilder
+                .withPayload(postEvent)
                 .setHeader(KafkaHeaders.TOPIC, kafkaConfig.postCreateTopic().name())
                 .build();
         kafkaTemplate.send(message);
     }
 
-    public void sendPostUpdatedMessage(Post post) throws JsonProcessingException {
+    public void sendPostUpdatedMessage(PostEvent post) throws JsonProcessingException {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(post);
 
         log.info(String.format("POST UPDATED MESSAGE => %s", json));
 
-        Message<Post> message = MessageBuilder
+        Message<PostEvent> message = MessageBuilder
                 .withPayload(post)
                 .setHeader(KafkaHeaders.TOPIC, kafkaConfig.postUpdateTopic().name())
                 .build();
         kafkaTemplate.send(message);
     }
 
-    public void sendPostDeletedMessage(Post post) throws JsonProcessingException {
+    public void sendPostDeletedMessage(PostEvent post) throws JsonProcessingException {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(post);
 
         log.info(String.format("POST DELETED MESSAGE => %s", json));
 
-        Message<Post> message = MessageBuilder
+        Message<PostEvent> message = MessageBuilder
                 .withPayload(post)
                 .setHeader(KafkaHeaders.TOPIC, kafkaConfig.postDeleteTopic().name())
                 .build();

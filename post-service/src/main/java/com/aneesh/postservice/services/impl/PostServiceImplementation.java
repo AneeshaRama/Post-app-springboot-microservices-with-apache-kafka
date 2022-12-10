@@ -1,5 +1,6 @@
 package com.aneesh.postservice.services.impl;
 
+import com.aneesh.basedomains.entities.PostEvent;
 import com.aneesh.postservice.exceptions.ResourceNotFoundException;
 import com.aneesh.postservice.entities.Post;
 import com.aneesh.postservice.kafka.KafkaProducer;
@@ -21,7 +22,13 @@ public class PostServiceImplementation implements IPostServices {
     @Override
     public Post createNewPost(Post post) throws JsonProcessingException {
         Post newPost = postRepository.save(post);
-        kafkaProducer.sendPostCreatedMessage(post);
+        PostEvent postEvent = new PostEvent();
+
+        postEvent.setMessage("postCreateEvent");
+        postEvent.setPostId(newPost.getPostId());
+        postEvent.setPostTitle(newPost.getPostTitle());
+        postEvent.setPostContent(newPost.getPostContent());
+        kafkaProducer.sendPostCreatedMessage(postEvent);
         return newPost;
     }
 
@@ -34,7 +41,14 @@ public class PostServiceImplementation implements IPostServices {
 
         postRepository.save(existingPost);
 
-        kafkaProducer.sendPostUpdatedMessage(existingPost);
+        PostEvent postEvent = new PostEvent();
+
+        postEvent.setMessage("postUpdateEvent");
+        postEvent.setPostId(existingPost.getPostId());
+        postEvent.setPostTitle(existingPost.getPostTitle());
+        postEvent.setPostContent(existingPost.getPostContent());
+
+        kafkaProducer.sendPostUpdatedMessage(postEvent);
 
         return existingPost;
     }
@@ -43,7 +57,12 @@ public class PostServiceImplementation implements IPostServices {
     public void deletePost(long postId) throws JsonProcessingException {
         Post post = postRepository.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post not found"));
 
-        kafkaProducer.sendPostDeletedMessage(post);
+        PostEvent postEvent = new PostEvent();
+        postEvent.setMessage("postDeleteEvent");
+        postEvent.setPostId(post.getPostId());
+        postEvent.setPostTitle(post.getPostTitle());
+        postEvent.setPostContent(post.getPostContent());
+        kafkaProducer.sendPostDeletedMessage(postEvent);
 
         postRepository.delete(post);
     }
