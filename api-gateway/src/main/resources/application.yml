@@ -21,4 +21,7 @@ zuul:
       path: /api/posts/**
       url: http://localhost:8090
 
+    COMMENT-SERVICE:
+      path: /api/comments/**
+      url: http://localhost:8091
 
