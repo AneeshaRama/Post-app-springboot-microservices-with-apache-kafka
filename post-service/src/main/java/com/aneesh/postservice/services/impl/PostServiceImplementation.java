@@ -40,7 +40,11 @@ public class PostServiceImplementation implements IPostServices {
     }
 
     @Override
-    public String deletePost(long postId) {
-        return null;
+    public void deletePost(long postId) throws JsonProcessingException {
+        Post post = postRepository.findById(postId).orElseThrow(()-> new ResourceNotFoundException("Post not found"));
+
+        kafkaProducer.sendPostDeletedMessage(post);
+
+        postRepository.delete(post);
     }
 }

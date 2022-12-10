@@ -9,6 +9,6 @@ public interface IPostServices {
 
     public Post updatePost(long postId, Post post) throws JsonProcessingException;
 
-    public String deletePost(long postId);
+    public void deletePost(long postId) throws JsonProcessingException;
 
 }
