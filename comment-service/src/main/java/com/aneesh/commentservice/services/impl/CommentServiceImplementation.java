@@ -47,9 +47,9 @@ public class CommentServiceImplementation implements ICommentService {
         CommentEvent commentEvent = new CommentEvent();
 
         commentEvent.setMessage("commentUpdatedEvent");
-        commentEvent.setCommentId(comment.getCommentId());
-        commentEvent.setCommentContent(comment.getCommentContent());
-        commentEvent.setPostId(comment.getPostId());
+        commentEvent.setCommentId(existingComment.getCommentId());
+        commentEvent.setCommentContent(existingComment.getCommentContent());
+        commentEvent.setPostId(existingComment.getPostId());
 
         kafkaProducer.sendCommentUpdatedMessage(commentEvent);
 
