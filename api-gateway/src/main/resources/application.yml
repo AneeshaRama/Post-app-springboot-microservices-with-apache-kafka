@@ -1,0 +1,24 @@
+server:
+  port: 8094
+
+spring:
+  application:
+    name: API-GATEWAY
+
+
+# EUREKA SERVER CONFIG
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+
+# ZUUL GATEWAY CONFIG
+zuul:
+  routes:
+    POST-SERVICE:
+      path: /api/posts/**
+      url: http://localhost:8090
+
+
