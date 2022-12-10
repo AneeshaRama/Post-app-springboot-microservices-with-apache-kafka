@@ -9,7 +9,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Post {
+public class PostEvent {
+
+    private String message;
 
     private long postId;
 

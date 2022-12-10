@@ -9,7 +9,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Comment {
+public class CommentEvent {
+
+    private String message;
 
     private long commentId;
 
