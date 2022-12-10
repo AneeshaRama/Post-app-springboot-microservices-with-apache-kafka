@@ -23,7 +23,7 @@ public class PostData {
 
     private String postContent;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private List<CommentData> comments = new ArrayList<>();
 
