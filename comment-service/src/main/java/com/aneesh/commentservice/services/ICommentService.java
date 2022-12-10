@@ -7,7 +7,7 @@ public interface ICommentService {
 
     public Comment createNewComment(long postId, Comment comment) throws JsonProcessingException;
 
-    public Comment updateComment(long commentId);
+    public Comment updateComment(long commentId, Comment comment) throws JsonProcessingException;
 
     public void deleteComment(long commentId);
 }

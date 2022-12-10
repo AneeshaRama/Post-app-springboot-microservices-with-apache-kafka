@@ -1,6 +1,7 @@
 package com.aneesh.commentservice.services.impl;
 
 import com.aneesh.commentservice.entites.Comment;
+import com.aneesh.commentservice.exceptions.ResourceNotFoundException;
 import com.aneesh.commentservice.kafka.KafkaProducer;
 import com.aneesh.commentservice.repositories.ICommentRepository;
 import com.aneesh.commentservice.services.ICommentService;
@@ -28,8 +29,16 @@ public class CommentServiceImplementation implements ICommentService {
     }
 
     @Override
-    public Comment updateComment(long commentId) {
-        return null;
+    public Comment updateComment(long commentId, Comment comment) throws JsonProcessingException {
+        Comment existingComment = commentRepository.findById(commentId).orElseThrow(()-> new ResourceNotFoundException("Comment not found"));
+
+        existingComment.setCommentContent(comment.getCommentContent());
+
+        commentRepository.save(existingComment);
+
+        kafkaProducer.sendCommentUpdatedMessage(existingComment);
+
+        return existingComment;
     }
 
     @Override
