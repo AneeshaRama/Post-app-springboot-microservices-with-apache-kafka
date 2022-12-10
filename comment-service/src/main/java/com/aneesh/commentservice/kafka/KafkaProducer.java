@@ -1,5 +1,6 @@
 package com.aneesh.commentservice.kafka;
 
+import com.aneesh.basedomains.entities.CommentEvent;
 import com.aneesh.commentservice.configs.KafkaConfig;
 import com.aneesh.commentservice.entites.Comment;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,6 +18,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
+
 @Service
 @AllArgsConstructor
 @Getter
@@ -26,43 +28,43 @@ public class KafkaProducer {
     @Autowired
     private KafkaConfig kafkaConfig;
 
-    private KafkaTemplate<String, Comment> kafkaTemplate;
+    private KafkaTemplate<String, CommentEvent> kafkaTemplate;
 
     private static final Logger log = LoggerFactory.getLogger(KafkaProducer.class);
 
-    public void sendCommentCreatedMessage(Comment comment) throws JsonProcessingException {
+    public void sendCommentCreatedMessage(CommentEvent comment) throws JsonProcessingException {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(comment);
 
         log.info(String.format("COMMENT CREATED MESSAGE => %s", json));
 
-        Message<Comment> message = MessageBuilder
+        Message<CommentEvent> message = MessageBuilder
                 .withPayload(comment)
                 .setHeader(KafkaHeaders.TOPIC, kafkaConfig.commentCreateTopic().name())
                 .build();
         kafkaTemplate.send(message);
     }
 
-    public void sendCommentUpdatedMessage(Comment comment) throws JsonProcessingException {
+    public void sendCommentUpdatedMessage(CommentEvent comment) throws JsonProcessingException {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(comment);
 
         log.info(String.format("COMMENT UPDATED MESSAGE => %s", json));
 
-        Message<Comment> message = MessageBuilder
+        Message<CommentEvent> message = MessageBuilder
                 .withPayload(comment)
                 .setHeader(KafkaHeaders.TOPIC, kafkaConfig.commentUpdateTopic().name())
                 .build();
         kafkaTemplate.send(message);
     }
 
-    public void sendCommentDeletedMessage(Comment comment) throws JsonProcessingException {
+    public void sendCommentDeletedMessage(CommentEvent comment) throws JsonProcessingException {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(comment);
 
         log.info(String.format("COMMENT DELETED MESSAGE => %s", json));
 
-        Message<Comment> message = MessageBuilder
+        Message<CommentEvent> message = MessageBuilder
                 .withPayload(comment)
                 .setHeader(KafkaHeaders.TOPIC, kafkaConfig.commentDeleteTopic().name())
                 .build();
