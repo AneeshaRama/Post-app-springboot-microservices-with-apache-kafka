@@ -20,7 +20,7 @@ public class PostConsumer {
     @Autowired
     private IPostDataRepository postDataRepository;
 
-    @KafkaListener(topics = "postCreatedEvent", groupId = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = "${post.topic.name.create}", groupId = "${spring.kafka.consumer.group-id}")
     private void consumePostCreatedEvent(PostEvent postEvent) throws JsonProcessingException {
 
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
@@ -33,7 +33,38 @@ public class PostConsumer {
         postData.setPostId(postEvent.getPostId());
         postData.setPostTitle(postEvent.getPostTitle());
         postData.setPostContent(postEvent.getPostContent());
-        System.out.println(postData.getPostId());
+
         postDataRepository.save(postData);
+        log.info("PostData saved successfully...");
+    }
+
+    @KafkaListener(topics = "${post.topic.name.update}", groupId = "${spring.kafka.consumer.group-id}")
+    private void consumePostUpdatedEvent(PostEvent postEvent) throws JsonProcessingException {
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(postEvent);
+
+        log.info(String.format("POST UPDATED EVENT RECEIVED => %s", json));
+
+        PostData postData = postDataRepository.findById(postEvent.getPostId()).get();
+
+        postData.setPostTitle(postEvent.getPostTitle());
+        postData.setPostContent(postEvent.getPostContent());
+
+        postDataRepository.save(postData);
+        log.info("PostData updated successfully...");
+    }
+
+    @KafkaListener(topics = "${post.topic.name.delete}", groupId = "${spring.kafka.consumer.group-id}")
+    private void consumeDeletePostEvent(PostEvent postEvent) throws JsonProcessingException {
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(postEvent);
+
+        log.info(String.format("POST DELETED EVENT RECEIVED => %s", json));
+
+        PostData postData = postDataRepository.findById(postEvent.getPostId()).get();
+
+        postDataRepository.delete(postData);
+
+        log.info("PostData deleted successfully...");
     }
 }
