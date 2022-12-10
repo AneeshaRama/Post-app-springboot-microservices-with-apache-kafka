@@ -9,5 +9,5 @@ public interface ICommentService {
 
     public Comment updateComment(long commentId, Comment comment) throws JsonProcessingException;
 
-    public void deleteComment(long commentId);
+    public void deleteComment(long commentId) throws JsonProcessingException;
 }

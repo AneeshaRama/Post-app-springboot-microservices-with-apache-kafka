@@ -42,7 +42,12 @@ public class CommentServiceImplementation implements ICommentService {
     }
 
     @Override
-    public void deleteComment(long commentId) {
+    public void deleteComment(long commentId) throws JsonProcessingException {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(()-> new ResourceNotFoundException("Comment not found"));
+
+        kafkaProducer.sendCommentDeletedMessage(comment);
+
+        commentRepository.delete(comment);
 
     }
 }
