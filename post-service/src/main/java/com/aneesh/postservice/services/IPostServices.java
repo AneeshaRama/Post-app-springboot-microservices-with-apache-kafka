@@ -7,7 +7,7 @@ public interface IPostServices {
 
     public Post createNewPost(Post post) throws JsonProcessingException;
 
-    public Post updatePost(long postId, Post post);
+    public Post updatePost(long postId, Post post) throws JsonProcessingException;
 
     public String deletePost(long postId);
 

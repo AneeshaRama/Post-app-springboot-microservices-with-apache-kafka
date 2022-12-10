@@ -1,5 +1,6 @@
 package com.aneesh.postservice.services.impl;
 
+import com.aneesh.postservice.exceptions.ResourceNotFoundException;
 import com.aneesh.postservice.entities.Post;
 import com.aneesh.postservice.kafka.KafkaProducer;
 import com.aneesh.postservice.repositories.IPostRepository;
@@ -25,8 +26,17 @@ public class PostServiceImplementation implements IPostServices {
     }
 
     @Override
-    public Post updatePost(long postId, Post post) {
-        return null;
+    public Post updatePost(long postId, Post post) throws JsonProcessingException {
+        Post existingPost = postRepository.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post not found"));
+
+        existingPost.setPostTitle(post.getPostTitle());
+        existingPost.setPostContent(post.getPostContent());
+
+        postRepository.save(existingPost);
+
+        kafkaProducer.sendPostUpdatedMessage(existingPost);
+
+        return existingPost;
     }
 
     @Override
