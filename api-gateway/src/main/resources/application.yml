@@ -25,3 +25,7 @@ zuul:
       path: /api/comments/**
       url: http://localhost:8091
 
+    QUERY-SERVICE:
+      path: /api/queries/**
+      url: http://localhost:8092
+
