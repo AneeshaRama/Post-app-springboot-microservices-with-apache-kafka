@@ -6,6 +6,8 @@ This is the simple event driven microservice architecture project created using 
 
 **Netflix's Zuul Server** is used as **API Gateway** for dynamic routing of requests to different microservices. 
 
+**Eureka Server** is used for registering different microservices.
+
 ##### **There are 3 services**
   - Post Service
   - Comment Service
